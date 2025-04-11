@@ -62,4 +62,30 @@ class Vehicle
     {
         $this->dailyRate = $dailyRate;
     }
+
+    public function valider(): void
+    {
+        if (empty($this->brand) || empty($this->model)) {
+            throw new \InvalidArgumentException("La marque et le modèle sont obligatoires.");
+        }
+
+        if ($this->dailyRate <= 0) {
+            throw new \InvalidArgumentException("Le tarif journalier doit être supérieur à 0.");
+        }
+    }
+
+    public function mettreAJour(string $brand, string $model, float $dailyRate): void
+    {
+        if (empty($brand) || empty($model)) {
+            throw new \InvalidArgumentException("La marque et le modèle sont obligatoires.");
+        }
+
+        if ($dailyRate <= 0) {
+            throw new \InvalidArgumentException("Le tarif journalier doit être supérieur à 0.");
+        }
+
+        $this->brand = $brand;
+        $this->model = $model;
+        $this->dailyRate = $dailyRate;
+    }
 }

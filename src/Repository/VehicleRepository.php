@@ -2,71 +2,40 @@
 
 namespace App\Repository;
 
-use App\Entity\User;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use App\Entity\Vehicle;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 
-/**
- * @extends ServiceEntityRepository<User>
- */
-class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
+class VehicleRepository
 {
-    public function __construct(ManagerRegistry $registry,private EntityManagerInterface $em)
-    {
-        parent::__construct($registry, User::class);
+    public function __construct(private EntityManagerInterface $em) {
         $this->em = $em;
     }
 
-
-    /**
-     * Rehash user password over time (used by Symfony security).
-     */
-    public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
+    public function save(Vehicle $vehicle): void
     {
-        if (!$user instanceof User) {
-            throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', $user::class));
-        }
-
-        $user->setPassword($newHashedPassword);
-        $this->em->persist($user);
+        $this->em->persist($vehicle);
         $this->em->flush();
     }
 
-    /**
-     * Save or update a user
-     */
-    public function save(User $user): void
+    public function delete(Vehicle $vehicle): void
     {
-        $this->em->persist($user);
+        $this->em->remove($vehicle);
         $this->em->flush();
     }
 
-    /**
-     * Delete a user
-     */
-    public function delete(User $user): void
+    public function findById(int $id): ?Vehicle
     {
-        $this->em->remove($user);
+        return $this->em->find(Vehicle::class, $id);
+    }
+
+    public function findAll(): array
+    {
+        return $this->em->getRepository(Vehicle::class)->findAll();
+    }
+
+    public function update(Vehicle $vehicle): void
+    {
+        // Comme l'entité est déjà gérée par Doctrine, il suffit de faire un flush
         $this->em->flush();
-    }
-
-    /**
-     * Find user by ID
-     */
-    public function findById(int $id): ?User
-    {
-        return $this->find($id);
-    }
-
-    /**
-     * Check if user exists by email
-     */
-    public function existsByEmail(string $email): bool
-    {
-        return (bool) $this->findOneBy(['email' => $email]);
     }
 }

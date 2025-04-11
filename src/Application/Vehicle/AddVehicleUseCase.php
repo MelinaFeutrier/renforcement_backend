@@ -13,18 +13,9 @@ class AddVehicleUseCase
 
     public function execute(string $brand, string $model, float $dailyRate): void
     {
-        // Business rules
-        if (empty($brand) || empty($model)) {
-            throw new \InvalidArgumentException("Brand and model are required.");
-        }
-
-        if ($dailyRate <= 0) {
-            throw new \InvalidArgumentException("Daily rate must be greater than 0.");
-        }
-
         $vehicle = new Vehicle($brand, $model, $dailyRate);
+        $vehicle->valider();
 
-        // Persist to database
         $this->vehicleRepository->save($vehicle);
     }
 }

@@ -3,7 +3,6 @@
 namespace App\Application\Commande;
 
 use App\Entity\Commande;
-use App\Enum\StatutCommande;
 use Doctrine\ORM\EntityManagerInterface;
 
 class CancelCommandeUseCase
@@ -12,13 +11,7 @@ class CancelCommandeUseCase
 
     public function execute(Commande $commande): void
     {
-        if (!in_array($commande->getStatut(), [
-            StatutCommande::CART, StatutCommande::EN_ATTENTE
-        ])) {
-            throw new \LogicException("Cette commande ne peut pas être annulée.");
-        }
-
-        $commande->setStatut(StatutCommande::ANNULEE);
+        $commande->annuler();
         $this->em->flush();
     }
 }

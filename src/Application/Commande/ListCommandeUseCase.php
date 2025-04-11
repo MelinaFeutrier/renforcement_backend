@@ -3,9 +3,7 @@ namespace App\Application\Commande;
 
 use App\Enum\StatutCommande;
 use App\Entity\User;
-use App\Entity\Commande;
 use App\Repository\CommandeRepository;
-use Doctrine\ORM\EntityManagerInterface;
 
 class ListCommandeUseCase
 {

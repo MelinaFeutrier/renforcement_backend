@@ -1,0 +1,60 @@
+erDiagram
+    UTILISATEUR {
+        int utilisateurID PK
+        string email
+        string motDePasse
+        string nom
+        string prenom
+        boolean estAdmin "unique=true pour admin"
+        date dateObtentionPermis
+    }
+
+    VEHICULE {
+        int vehiculeID PK
+        string marque
+        string modele
+        float tarifJournalier
+        bool disponible
+    }
+
+    COMMANDE {
+        int commandeID PK
+        int utilisateurID FK
+        string statut
+        date dateCreation
+        float montantTotal
+        string modePaiement
+    }
+
+    RESERVATION {
+        int reservationID PK
+        int commandeID FK
+        int vehiculeID FK
+        date dateDebut
+        date dateFin
+        float prixTotal
+    }
+
+    ASSURANCE {
+        int assuranceID PK
+        int commandeID FK
+        float prix
+        string type
+    }
+
+    PAIEMENT {
+        int paiementID PK
+        int commandeID FK
+        float montant
+        date datePaiement
+        string methodePaiement
+        string reference
+        string statut
+    }
+
+    UTILISATEUR ||--o{ COMMANDE : "crée"
+    UTILISATEUR ||--o{ VEHICULE : "gère (l'unique admin)"
+    COMMANDE ||--o{ RESERVATION : "contient"
+    COMMANDE ||--o| ASSURANCE : "peut inclure"
+    COMMANDE ||--o| PAIEMENT : "est finalisée par"
+    VEHICULE ||--o{ RESERVATION : "est réservé dans"

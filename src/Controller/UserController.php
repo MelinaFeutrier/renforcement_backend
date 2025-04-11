@@ -14,7 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class UserController extends AbstractController
 {
-    #[Route('/api/account', name: 'create_account', methods: ['POST'])]
+    #[Route('/account', name: 'create_account', methods: ['POST'])]
     public function create_account(Request $request, CreateAccountUseCase $useCase): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
@@ -41,7 +41,7 @@ class UserController extends AbstractController
     public function createAdmin(UserPasswordHasherInterface $hasher, EntityManagerInterface $em): JsonResponse
     {
         $admin = new User(
-            email: 'admin@example.com',
+            email: 'admin2@example.com',
             nom: 'Admin',
             prenom: 'Boss',
             dateObtentionPermis: new \DateTimeImmutable('2000-01-01')

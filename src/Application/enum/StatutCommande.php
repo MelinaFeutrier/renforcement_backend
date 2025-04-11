@@ -1,10 +1,10 @@
 <?php
-
 namespace App\Enum;
 
-enum StatutReservation: string
+enum StatutCommande: string
 {
+    case CART = 'panier';
     case EN_ATTENTE = 'en_attente';
     case VALIDEE = 'validee';
-    case ANNULEE = 'annulee';
+    case ANNULEE='annulee';
 }

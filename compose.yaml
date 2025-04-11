@@ -15,6 +15,8 @@ services:
       timeout: 5s
       retries: 5
       start_period: 60s
+    volumes:
+      - database1_data:/var/lib/postgresql/data:rw
 
   # Service PHP/Apache pour exécuter l'application Symfony
   php:
@@ -37,3 +39,5 @@ services:
       APP_ENV: dev
     working_dir: /var/www/html
 
+volumes:
+  database_data:

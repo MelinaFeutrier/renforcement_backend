@@ -3,7 +3,7 @@ namespace App\Repository;
 
 use App\Entity\Commande;
 use App\Entity\User;
-use App\Application\Enum\StatutCommande;
+use App\Enum\StatutCommande;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -13,7 +13,7 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class CommandeRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry,private EntityManagerInterface $em)
+    public function __construct(ManagerRegistry $registry, private EntityManagerInterface $em)
     {
         parent::__construct($registry, Commande::class);
         $this->em = $em;
@@ -21,12 +21,14 @@ class CommandeRepository extends ServiceEntityRepository
 
     /**
      * Lister les commandes d'un client (optionnellement par statut)
+     * Utilise JOIN FETCH pour optimiser le chargement des réservations
      */
     public function findByClient(User $client, ?StatutCommande $statut = null): array
     {
         $qb = $this->createQueryBuilder('c')
             ->leftJoin('c.reservations', 'r')
-            ->addSelect('r')
+            ->leftJoin('r.vehicule', 'v')
+            ->addSelect('r', 'v')
             ->where('c.client = :client')
             ->setParameter('client', $client);
 
@@ -39,11 +41,35 @@ class CommandeRepository extends ServiceEntityRepository
     }
 
     /**
-     * Trouver une commande spécifique par ID
+     * Trouver une commande spécifique par ID avec tous ses liens (optimisé)
      */
     public function findById(int $id): ?Commande
     {
-        return $this->find($id);
+        return $this->createQueryBuilder('c')
+            ->leftJoin('c.reservations', 'r')
+            ->leftJoin('r.vehicule', 'v')
+            ->addSelect('r', 'v')
+            ->where('c.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    /**
+     * Trouver le panier actif d'un client (commande en statut CART)
+     */
+    public function findCartByClient(User $client): ?Commande
+    {
+        return $this->createQueryBuilder('c')
+            ->leftJoin('c.reservations', 'r')
+            ->leftJoin('r.vehicule', 'v')
+            ->addSelect('r', 'v')
+            ->where('c.client = :client')
+            ->andWhere('c.statut = :statut')
+            ->setParameter('client', $client)
+            ->setParameter('statut', StatutCommande::CART)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     /**

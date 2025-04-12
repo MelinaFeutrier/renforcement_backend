@@ -3,18 +3,26 @@
 namespace App\Application\Commande;
 
 use App\Entity\Commande;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\CommandeRepository;
 
 class ConfirmCommandeUseCase
 {
-    public function __construct(private EntityManagerInterface $em)
+    private CommandeRepository $commandeRepository;
+
+    public function __construct(CommandeRepository $commandeRepository)
     {
-        $this->em = $em;
+        $this->commandeRepository = $commandeRepository;
     }
 
-    public function execute(Commande $commande): void
+    /**
+     * Confirme une commande (la fait passer de l'état panier à confirmée)
+     */
+    public function execute(Commande $commande): float
     {
         $commande->confirmer();
-        $this->em->flush();
+
+        $this->commandeRepository->save($commande);
+
+        return $commande->getTotalPrice();
     }
 }

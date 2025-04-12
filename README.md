@@ -168,11 +168,3 @@ php bin/console doctrine:migrations:migrate
 # Créer un utilisateur admin (optionnel)
 # Utilisez la route /create-admin pour créer un admin
 ```
-
-## Améliorations possibles
-
-- Mise en place d'une authentification plus robuste
-- Développement d'une interface frontend
-- Implémentation de tests unitaires et fonctionnels
-- Système de disponibilité des véhicules
-- Gestion des conflits de réservation
